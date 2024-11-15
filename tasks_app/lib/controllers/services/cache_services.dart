@@ -7,26 +7,25 @@ import 'package:flutter/foundation.dart' show immutable;
 class CacheServices {
   const CacheServices._();
 
+  /// Enregistrer des données dans le cache
   static Future<bool> setData(String key, APICacheDBModel model) async =>
       await APICacheManager().addCacheData(model);
 
+  /// Récupérer des données à partir du cache en utilisant une clé
   static Future<APICacheDBModel> getData(String key) async =>
       await APICacheManager().getCacheData(key);
 
-  static Future<bool> delete(String key) async =>
-      await APICacheManager().deleteCache(key);
-
+  /// Vérifie si une clé existe dans le cache
   static Future<bool> containsKey(String key) async =>
       await APICacheManager().isAPICacheKeyExist(key);
 
-  static Future<void> clearAll() async => await APICacheManager().emptyCache();
-
- // Retrieve all cached data (without specifying a key)
+  /// Récupère toutes les données mises en cache (sans spécifier de clé)
   static Future<List<APICacheDBModel>> getAllData() async {
-    // Query all entries from the cache database
-    final List<Map<String, dynamic>> queryResult = await APICacheDBHelper.query(APICacheDBModel.table);
+    // Interroge toutes les entrées de la base de données du cache
+    final List<Map<String, dynamic>> queryResult =
+        await APICacheDBHelper.query(APICacheDBModel.table);
 
-    // Convert each entry into an APICacheDBModel object
+    // Convertit chaque entrée en objet APICacheDBModel
     return queryResult.map((data) => APICacheDBModel.fromMap(data)).toList();
   }
 }

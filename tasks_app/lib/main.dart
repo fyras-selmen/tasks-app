@@ -9,7 +9,6 @@ import 'package:tasks_app/views/home_view/home_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize the NotificationService
   NotificationService notificationService = NotificationService();
   await notificationService.initialize();
   runApp(const ProviderScope(child: MyApp()));

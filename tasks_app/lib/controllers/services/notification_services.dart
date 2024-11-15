@@ -8,15 +8,17 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  /// Initialisation du service de notification
   Future<void> initialize() async {
     await requestNotificationPermissions();
 
-    // Initialize timezone data
+    // Initialiser les données de fuseau horaire
     tz.initializeTimeZones();
 
+    // Définir la localisation du fuseau horaire local
     tz.setLocalLocation(tz.getLocation(DateTime.now().timeZoneName));
 
-    // Initialize notification settings for Android and iOS
+    // Initialiser les paramètres de notification pour Android et iOS
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const DarwinInitializationSettings iosSettings =
@@ -27,15 +29,19 @@ class NotificationService {
       iOS: iosSettings,
     );
 
+    // Initialiser le plugin de notifications
     await localNotificationsPlugin.initialize(initSettings);
   }
 
+  /// Demander l'autorisation d'envoyer des notifications
   Future<void> requestNotificationPermissions() async {
     final bool isGranted = await localNotificationsPlugin
             .resolvePlatformSpecificImplementation<
                 IOSFlutterLocalNotificationsPlugin>()
             ?.requestPermissions() ??
         false;
+
+    // Si l'autorisation n'est pas accordée sur iOS, demander sur Android
     if (!isGranted) {
       final bool result = await localNotificationsPlugin
               .resolvePlatformSpecificImplementation<
@@ -44,23 +50,24 @@ class NotificationService {
           false;
 
       if (!result) {
-        log('Notification permission not granted');
+        log('Permission de notification non accordée'); // Log en cas d'échec
       }
     }
   }
 
+  /// Planifier une notification pour une tâche spécifique
   Future<void> scheduleTaskNotification({
     required String title,
     required String body,
-    required DateTime scheduledDateTime, // Task's date and time
+    required DateTime scheduledDateTime, // Date et heure de la tâche
   }) async {
-    // Create notification details for Android and iOS
+    // Créer les détails de la notification pour Android et iOS
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-      'task_channel_id',
-      'Task Notifications',
+      'task_channel_id', // ID du canal de notification
+      'Notifications de Tâches', // Nom du canal
       icon: "@mipmap/ic_launcher",
-      channelDescription: 'Notifications for scheduled tasks',
+      channelDescription: 'Notifications pour les tâches planifiées',
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
@@ -73,23 +80,22 @@ class NotificationService {
       iOS: iosDetails,
     );
 
-    // Convert DateTime to TZDateTime (timezone-aware)
+    // Convertir DateTime en TZDateTime (avec prise en compte du fuseau horaire)
     final tz.TZDateTime scheduledTZDateTime =
         tz.TZDateTime.from(scheduledDateTime, tz.local);
 
-    // Schedule the notification
+    // Planifier la notification à l'heure spécifiée
     await localNotificationsPlugin.zonedSchedule(
       DateTime.now().microsecondsSinceEpoch ~/
-          20000000, // Unique ID for the notification
-      title, // Title of the notification
-      body, // Body of the notification
-      scheduledTZDateTime, // Date and time when the notification should appear
-      platformDetails, // Notification details (Android/iOS)
+          20000000, // ID unique pour la notification
+      title, // Titre de la notification
+      body, // Corps de la notification
+      scheduledTZDateTime, // Date et heure auxquelles la notification doit apparaître
+      platformDetails, // Détails spécifiques à la plateforme (Android/iOS)
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents:
-          DateTimeComponents.time, // Match exact time components (hour, minute)
+      matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 }

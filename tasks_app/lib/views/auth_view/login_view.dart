@@ -40,6 +40,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
             children: [
               Text(
                 "Gestionnaire de tâches",
+                textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.deepPurple,
                     fontSize: 55.sp,

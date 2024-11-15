@@ -148,20 +148,24 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               style:
                   ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
               child: const Text(
-                'Ajouter une tâche',
+                'Ajouter',
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
                 String title = _titleController.text;
                 String description = _descriptionController.text;
+
                 if (title.isNotEmpty &&
                     description.isNotEmpty &&
                     _startTime != null &&
                     _endTime != null) {
+                  // Vérifie si l'heure de début est avant l'heure de fin
                   if (_startTime!.hour + _startTime!.minute / 60 <
                           _endTime!.hour + _endTime!.minute / 60 &&
+                      // Vérifie si l'heure actuelle est avant l'heure de début
                       TimeOfDay.now().hour + TimeOfDay.now().minute / 60 <
                           _startTime!.hour + _startTime!.minute / 60 &&
+                      // Vérifie si l'heure de début est avant l'heure de fin
                       _startTime!.hour + _startTime!.minute / 60 <
                           _endTime!.hour + _endTime!.minute / 60) {
                     final ref = ProviderScope.containerOf(context);
@@ -171,15 +175,16 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                         startTime:
                             "${_startTime!.hour < 10 ? "0" : ""}${_startTime!.hour}:${_startTime!.minute < 10 ? "0" : ""}${_startTime!.minute}",
                         endTime:
-                            "${_startTime!.hour < 10 ? "0" : ""}${_endTime!.hour}:${_startTime!.minute < 10 ? "0" : ""}${_endTime!.minute}",
+                            "${_endTime!.hour < 10 ? "0" : ""}${_endTime!.hour}:${_startTime!.minute < 10 ? "0" : ""}${_endTime!.minute}",
                         date: widget.day,
                         sendNotification: _notificationEnabled));
                   } else {
-                    log("Gérer le message du temps incorrecte");
+                    log("Gérer le message du temps saisis incorrecte");
                   }
                 } else {
-                  log("Gérer le message du données incorrectes");
+                  log("Gérer le message des données saisis incorrectes");
                 }
+
                 Navigator.of(context).pop();
               },
             ),

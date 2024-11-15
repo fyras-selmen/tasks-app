@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tasks_app/controllers/providers/auth_provider.dart';
 import 'package:tasks_app/controllers/providers/task_provider.dart';
 import 'package:tasks_app/utils/utils.dart';
 
@@ -59,8 +58,8 @@ class _ProfileViewState extends State<ProfileView> {
             margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
             child: ElevatedButton(
               onPressed: () {
-                final ref = ProviderScope.containerOf(context);
-                ref.read(authProvider.notifier).logout();
+                /* final ref = ProviderScope.containerOf(context);
+                ref.read(authProvider.notifier).logout(); */ // Se déconnecter
                 Navigator.of(context).pushReplacementNamed("/login");
               },
               style: ElevatedButton.styleFrom(

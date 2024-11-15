@@ -67,6 +67,7 @@ class _TasksViewState extends ConsumerState<TasksView> {
                 child: Text("Aucune tâche pour ce jour"),
               )
             : ListView.separated(
+                reverse: true,
                 itemBuilder: (context, i) {
                   return Container(
                       padding: const EdgeInsets.all(12),
